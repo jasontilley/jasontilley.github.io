@@ -1,0 +1,467 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>octapy.tools &#8212; octapy 1.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for octapy.tools</h1><div class="highlight"><pre>
+<span></span><span class="c1"># octapy – Ocean Connectivity and Tracking Algorithms</span>
+<span class="c1"># Copyright (C) 2020  Jason Tilley</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">cartopy.crs</span> <span class="k">as</span> <span class="nn">ccrs</span>
+<span class="kn">import</span> <span class="nn">cartopy.feature</span> <span class="k">as</span> <span class="nn">cfeature</span>
+<span class="kn">import</span> <span class="nn">octapy</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">splitext</span>
+<span class="kn">from</span> <span class="nn">netCDF4</span> <span class="kn">import</span> <span class="n">Dataset</span>
+<span class="kn">from</span> <span class="nn">pyproj</span> <span class="kn">import</span> <span class="n">Geod</span>
+<span class="kn">from</span> <span class="nn">pydap.client</span> <span class="kn">import</span> <span class="n">open_url</span>
+<span class="kn">from</span> <span class="nn">owslib.wmts</span> <span class="kn">import</span> <span class="n">WebMapTileService</span>
+
+
+<div class="viewcode-block" id="get_filepath"><a class="viewcode-back" href="../../octapy.html#octapy.tools.get_filepath">[docs]</a><span class="k">def</span> <span class="nf">get_filepath</span><span class="p">(</span><span class="n">datetime64</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">submodel_name</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Get the filename for a given timestep</span>
+
+<span class="sd">    :param datetime64:</span>
+<span class="sd">        a numpy.datetime64 object for the data&#39;s time</span>
+<span class="sd">    :param model_name:</span>
+<span class="sd">        the oceanographic model being used</span>
+<span class="sd">    :return: string of the filepath</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">datetime64s</span> <span class="o">=</span> <span class="n">datetime64</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">timedelta64</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">)</span>
+    <span class="n">datetime64s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">datetime64</span><span class="p">(</span><span class="n">datetime64s</span><span class="p">,</span> <span class="s1">&#39;h&#39;</span><span class="p">)</span>
+    <span class="n">datetime64s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">datetime64</span><span class="p">(</span><span class="n">datetime64s</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">)</span>
+    <span class="n">filepath</span> <span class="o">=</span> <span class="p">(</span><span class="n">data_dir</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span>
+                <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">isdigit</span><span class="p">(),</span> <span class="nb">str</span><span class="p">(</span><span class="n">datetime64</span><span class="p">)))</span>
+                   <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">submodel_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
+                   <span class="o">+</span> <span class="s1">&#39;.nc&#39;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">filepath</span></div>
+
+
+<div class="viewcode-block" id="get_extent"><a class="viewcode-back" href="../../octapy.html#octapy.tools.get_extent">[docs]</a><span class="k">def</span> <span class="nf">get_extent</span><span class="p">(</span><span class="n">grid</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Get the spatial extent of a grid as a list</span>
+
+<span class="sd">    :param grid:</span>
+<span class="sd">        a Grid instance</span>
+<span class="sd">    :return:</span>
+<span class="sd">        a list of coordinates representing the extent as [minimum longitude,</span>
+<span class="sd">        maximum longitude, minimum latitude, maximum latitude]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">extent</span> <span class="o">=</span> <span class="p">[</span><span class="n">grid</span><span class="o">.</span><span class="n">lons</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">grid</span><span class="o">.</span><span class="n">lons</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span>
+              <span class="n">grid</span><span class="o">.</span><span class="n">lats</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">grid</span><span class="o">.</span><span class="n">lats</span><span class="o">.</span><span class="n">max</span><span class="p">()]</span>
+    <span class="k">return</span> <span class="n">extent</span></div>
+
+<div class="viewcode-block" id="netcdf_to_csv"><a class="viewcode-back" href="../../octapy.html#octapy.tools.netcdf_to_csv">[docs]</a><span class="k">def</span> <span class="nf">netcdf_to_csv</span><span class="p">(</span><span class="n">file_list</span><span class="p">,</span> <span class="n">outfile</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;convert output netcdf files to a .csv file</span>
+
+<span class="sd">    :param file_list:</span>
+<span class="sd">        a list of paths to the netcdf files to be converted</span>
+<span class="sd">    :param outfile:</span>
+<span class="sd">        path of the .csv file to be created</span>
+<span class="sd">    :return:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">file_list</span><span class="p">:</span>
+        <span class="n">ds</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+        <span class="nb">id</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_output.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">datetime64</span><span class="p">(</span><span class="n">ds</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">to_array</span><span class="p">()</span><span class="o">.</span><span class="n">isel</span><span class="p">(</span><span class="n">time</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to_series</span><span class="p">()[:,</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">({</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="nb">id</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="n">time</span><span class="p">})</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot_csv_output"><a class="viewcode-back" href="../../octapy.html#octapy.tools.plot_csv_output">[docs]</a><span class="k">def</span> <span class="nf">plot_csv_output</span><span class="p">(</span><span class="n">file_list</span><span class="p">,</span> <span class="n">extent</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;plot output trajectories contained in a .csv file</span>
+
+<span class="sd">    :param file_list:</span>
+<span class="sd">        a list of paths to the .csv files to be plotted</span>
+<span class="sd">    :param extent:</span>
+<span class="sd">        a list of coordinates representing the extent as [minimum longitude,</span>
+<span class="sd">        maximum longitude, minimum latitude, maximum latitude]</span>
+<span class="sd">    :return:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">axes</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">())</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">coastlines</span><span class="p">(</span><span class="n">resolution</span><span class="o">=</span><span class="s1">&#39;10m&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">colors</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">colors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">file_list</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">csv_file</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">file_list</span><span class="p">,</span> <span class="n">colors</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">csv_file</span><span class="p">)</span>
+        <span class="n">lats</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span>
+        <span class="n">lons</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">plot_type</span> <span class="o">==</span> <span class="s1">&#39;lines&#39;</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lons</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="n">step</span><span class="p">],</span> <span class="n">lats</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="n">step</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
+                     <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">plot_type</span> <span class="o">==</span> <span class="s1">&#39;scatter&#39;</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">lons</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="n">step</span><span class="p">],</span> <span class="n">lats</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="n">step</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_extent</span><span class="p">(</span><span class="n">extent</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">splitext</span><span class="p">(</span><span class="n">csv_file</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.png&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="plot_netcdf_output"><a class="viewcode-back" href="../../octapy.html#octapy.tools.plot_netcdf_output">[docs]</a><span class="k">def</span> <span class="nf">plot_netcdf_output</span><span class="p">(</span><span class="n">file_list</span><span class="p">,</span> <span class="n">extent</span><span class="p">,</span> <span class="n">out_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span>
+                       <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">drifter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">contour_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                       <span class="n">contour_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;plot output trajectories contained in netcdf files</span>
+
+<span class="sd">    :param file_list:</span>
+<span class="sd">        a list of paths to the .csv files to be plotted</span>
+<span class="sd">    :param extent:</span>
+<span class="sd">        a list of coordinates representing the extent as [minimum longitude,</span>
+<span class="sd">        maximum longitude, minimum latitude, maximum latitude]</span>
+<span class="sd">    :param out_file:</span>
+<span class="sd">        path for the output image file</span>
+<span class="sd">    :param step:</span>
+<span class="sd">        integer representing the number of trajectory points to plot (e.g,</span>
+<span class="sd">        step=2 means you will show every two points)</span>
+<span class="sd">    :param plot_type:</span>
+<span class="sd">        type of plot for each trajectory, may be &#39;lines&#39; or &#39;scatter&#39;.</span>
+<span class="sd">        Defaults is &#39;lines&#39;.</span>
+<span class="sd">    :param colors:</span>
+<span class="sd">        list of python colors to customize line colors. Must be same length as</span>
+<span class="sd">        file_list.</span>
+<span class="sd">    :param drifter:</span>
+<span class="sd">        path to .csv file containing drifter track containing columns &#39;lats&#39;</span>
+<span class="sd">        and &#39;lons&#39;</span>
+<span class="sd">    :param contour_file:</span>
+<span class="sd">        path to netcdf file containing spatial temperature data</span>
+<span class="sd">    :param contour_idx:</span>
+<span class="sd">        index for the sigma level of temperature data to plot (0 = surface)</span>
+<span class="sd">    :return:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">URL</span> <span class="o">=</span> <span class="s1">&#39;http://gibs.earthdata.nasa.gov/wmts/epsg4326/best/wmts.cgi&#39;</span>
+    <span class="n">wmts</span> <span class="o">=</span> <span class="n">WebMapTileService</span><span class="p">(</span><span class="n">URL</span><span class="p">)</span>
+    <span class="n">layer</span> <span class="o">=</span> <span class="s1">&#39;BlueMarble_NextGeneration&#39;</span>
+    <span class="c1">#water = &#39;MODIS_Water_Mask&#39;</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">axes</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">())</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_extent</span><span class="p">(</span><span class="n">extent</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">add_wmts</span><span class="p">(</span><span class="n">wmts</span><span class="p">,</span> <span class="n">layer</span><span class="p">,</span> <span class="n">wmts_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="s1">&#39;2016-02-05&#39;</span><span class="p">})</span>
+    <span class="c1">#ax.add_wmts(wmts, water, wmts_kwargs={&#39;time&#39;: &#39;2016-02-05&#39;})</span>
+    <span class="n">ocean</span> <span class="o">=</span> <span class="n">cfeature</span><span class="o">.</span><span class="n">NaturalEarthFeature</span><span class="p">(</span><span class="s1">&#39;physical&#39;</span><span class="p">,</span> <span class="s1">&#39;ocean&#39;</span><span class="p">,</span>
+                                                <span class="n">scale</span><span class="o">=</span><span class="s1">&#39;10m&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span>
+                                                <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">add_feature</span><span class="p">(</span><span class="n">ocean</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">coastlines</span><span class="p">(</span><span class="n">resolution</span><span class="o">=</span><span class="s1">&#39;10m&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">contour_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">rootgrp</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">contour_file</span><span class="p">)</span>
+        <span class="n">lats</span> <span class="o">=</span> <span class="n">rootgrp</span><span class="p">[</span><span class="s1">&#39;Latitude&#39;</span><span class="p">][:]</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">lons</span> <span class="o">=</span> <span class="n">rootgrp</span><span class="p">[</span><span class="s1">&#39;Longitude&#39;</span><span class="p">][:]</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">rootgrp</span><span class="p">[</span><span class="s1">&#39;temperature&#39;</span><span class="p">][:]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">contour_idx</span><span class="p">]</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">lons</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span>
+                    <span class="n">transform</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">(),</span>
+                    <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;jet&#39;</span><span class="p">,</span>
+                    <span class="n">levels</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">colors</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">colors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">file_list</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">nc_file</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">file_list</span><span class="p">,</span> <span class="n">colors</span><span class="p">):</span>
+        <span class="n">rootgrp</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">nc_file</span><span class="p">)</span>
+        <span class="n">lats</span> <span class="o">=</span> <span class="n">rootgrp</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span>
+        <span class="n">lons</span> <span class="o">=</span> <span class="n">rootgrp</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">plot_type</span> <span class="o">==</span> <span class="s1">&#39;lines&#39;</span><span class="p">:</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">lons</span><span class="p">)):</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lons</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="n">step</span><span class="p">],</span> <span class="n">lats</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="n">step</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
+                         <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">lons</span><span class="p">)):</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">lons</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">lats</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span>
+                            <span class="n">s</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">drifter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">drifter</span><span class="p">)</span>
+                <span class="n">lats</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span>
+                <span class="n">lons</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lons</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.00</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">plot_type</span> <span class="o">==</span> <span class="s1">&#39;scatter&#39;</span><span class="p">:</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">lats</span><span class="p">)):</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">lons</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="n">step</span><span class="p">],</span> <span class="n">lats</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="n">step</span><span class="p">],</span>
+                            <span class="n">color</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">drifter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">drifter</span><span class="p">)</span>
+                <span class="n">lats</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span>
+                <span class="n">lons</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">lons</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_extent</span><span class="p">(</span><span class="n">extent</span><span class="p">)</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="mf">6.4</span><span class="p">,</span> <span class="mf">4.12</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_position</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">out_file</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">splitext</span><span class="p">(</span><span class="n">nc_file</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.png&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">out_file</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="build_skill_release"><a class="viewcode-back" href="../../octapy.html#octapy.tools.build_skill_release">[docs]</a><span class="k">def</span> <span class="nf">build_skill_release</span><span class="p">(</span><span class="n">drifter_file</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="s1">&#39;3 Days&#39;</span><span class="p">),</span>
+                        <span class="n">data_freq</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="s1">&#39;60 minutes&#39;</span><span class="p">)):</span>
+    <span class="sd">&quot;&quot;&quot;Determine the model skill against a particular drifter</span>
+
+<span class="sd">    :param drifter_file:</span>
+<span class="sd">        a .csv file of the drifter data with the columns &#39;datetime&#39;, &#39;lat&#39;, and</span>
+<span class="sd">        &#39;lon&#39;</span>
+<span class="sd">    :param model:</span>
+<span class="sd">        an initialized octapy.tracking.Model object</span>
+<span class="sd">    :param period:</span>
+<span class="sd">        a pandas Timedelta object representing the time period for which to</span>
+<span class="sd">        calculate the skill</span>
+<span class="sd">    :param data_freq:</span>
+<span class="sd">        a pandas Timedelta object representing the frequency of the drifter data</span>
+<span class="sd">    :return:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Read the release file</span>
+    <span class="n">release</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">release_file</span><span class="p">)</span>
+    <span class="n">release</span><span class="p">[</span><span class="s1">&#39;start_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">release</span><span class="p">[</span><span class="s1">&#39;start_time&#39;</span><span class="p">],</span>
+                                           <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:%M:%S&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Read the drifter data file</span>
+    <span class="n">drifter_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">drifter_file</span><span class="p">)</span>
+
+    <span class="c1"># convert the dates to datetimes</span>
+    <span class="n">datetime</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">({</span><span class="s1">&#39;year&#39;</span><span class="p">:</span> <span class="n">drifter_data</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">],</span>
+                               <span class="s1">&#39;month&#39;</span><span class="p">:</span> <span class="n">drifter_data</span><span class="p">[</span><span class="s1">&#39;month&#39;</span><span class="p">],</span>
+                               <span class="s1">&#39;day&#39;</span><span class="p">:</span> <span class="n">drifter_data</span><span class="p">[</span><span class="s1">&#39;day&#39;</span><span class="p">],</span>
+                               <span class="s1">&#39;hour&#39;</span><span class="p">:</span> <span class="n">drifter_data</span><span class="p">[</span><span class="s1">&#39;hour&#39;</span><span class="p">]})</span>
+    <span class="n">drifter_data</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span>
+
+    <span class="c1"># make sure you don&#39;t run the model outside the data range</span>
+    <span class="n">end_slice</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">period</span> <span class="o">/</span> <span class="n">data_freq</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="c1"># set the stride for looping through date range</span>
+    <span class="n">stride</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="s1">&#39;1 Days&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="n">data_freq</span><span class="p">)</span>
+
+    <span class="c1"># for each particle in the release file</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">release</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+        <span class="n">date_range</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">release</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;start_time&#39;</span><span class="p">],</span>
+                                   <span class="n">release</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;start_time&#39;</span><span class="p">]</span>
+                                   <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">release</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;days&#39;</span><span class="p">],</span> <span class="s1">&#39;D&#39;</span><span class="p">),</span>
+                                   <span class="n">freq</span><span class="o">=</span><span class="n">data_freq</span><span class="p">)</span>
+        <span class="n">date_range</span> <span class="o">=</span> <span class="n">date_range</span><span class="p">[:</span><span class="o">-</span><span class="n">end_slice</span><span class="p">:</span><span class="n">stride</span><span class="p">]</span>
+        <span class="c1"># create a new dataframe to store the release data</span>
+        <span class="n">new_release</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">release</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>
+                                   <span class="n">index</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">date_range</span><span class="p">)))</span>
+        <span class="n">new_release</span><span class="p">[</span><span class="s1">&#39;start_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">date_range</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;datetime64[s]&#39;</span><span class="p">)</span>
+        <span class="n">new_release</span><span class="p">[</span><span class="s1">&#39;particle_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">release</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;particle_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+                                      <span class="o">+</span> <span class="s1">&#39;_&#39;</span>
+                                      <span class="o">+</span> <span class="n">new_release</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+        <span class="n">new_release</span><span class="p">[</span><span class="s1">&#39;num&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">release</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;num&#39;</span><span class="p">]</span>
+        <span class="n">new_release</span><span class="p">[</span><span class="s1">&#39;start_depth&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">release</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;start_depth&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+        <span class="n">new_release</span><span class="p">[</span><span class="s1">&#39;days&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">period</span><span class="o">.</span><span class="n">days</span>
+        <span class="n">drifter_id</span> <span class="o">=</span> <span class="n">release</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;particle_id&#39;</span><span class="p">]</span>
+        <span class="n">drifter_id_data</span> <span class="o">=</span> <span class="n">drifter_data</span><span class="p">[</span><span class="n">drifter_data</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">drifter_id</span><span class="p">]</span>
+        <span class="n">drifter_id_data</span> <span class="o">=</span> <span class="n">new_release</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">drifter_id_data</span><span class="p">,</span>
+                                            <span class="n">left_on</span><span class="o">=</span><span class="s1">&#39;start_time&#39;</span><span class="p">,</span>
+                                            <span class="n">right_on</span><span class="o">=</span><span class="s1">&#39;datetime&#39;</span><span class="p">)</span>
+        <span class="n">new_release</span><span class="p">[</span><span class="s1">&#39;start_lat&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">drifter_id_data</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span>
+        <span class="n">new_release</span><span class="p">[</span><span class="s1">&#39;start_lon&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">drifter_id_data</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span>
+        <span class="n">new_release</span><span class="p">[</span><span class="s1">&#39;start_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">date_range</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;datetime64[s]&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+        <span class="n">new_release</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;release_drifter_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">drifter_id</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.csv&#39;</span><span class="p">,</span>
+                           <span class="n">float_format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.4f</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_drifter_data"><a class="viewcode-back" href="../../octapy.html#octapy.tools.get_drifter_data">[docs]</a><span class="k">def</span> <span class="nf">get_drifter_data</span><span class="p">(</span><span class="n">drifter_file</span><span class="p">,</span> <span class="n">drifter_id</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Gets drifter data from a given .csv file for a particular drifter id</span>
+
+<span class="sd">    :param drifter_file:</span>
+<span class="sd">        a .csv file of the drifter data with the columns &#39;datetime&#39;, &#39;lat&#39;, and</span>
+<span class="sd">        &#39;lon&#39;</span>
+<span class="sd">    :param drifter_id:</span>
+<span class="sd">        the drifter id with the same type as in the drifter file</span>
+<span class="sd">    :return: a Pandas DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">drifter_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">drifter_file</span><span class="p">)</span>
+    <span class="c1"># convert the dates to datetimes</span>
+    <span class="n">datetime</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">({</span><span class="s1">&#39;year&#39;</span><span class="p">:</span> <span class="n">drifter_data</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">],</span>
+                               <span class="s1">&#39;month&#39;</span><span class="p">:</span> <span class="n">drifter_data</span><span class="p">[</span><span class="s1">&#39;month&#39;</span><span class="p">],</span>
+                               <span class="s1">&#39;day&#39;</span><span class="p">:</span> <span class="n">drifter_data</span><span class="p">[</span><span class="s1">&#39;day&#39;</span><span class="p">],</span>
+                               <span class="s1">&#39;hour&#39;</span><span class="p">:</span> <span class="n">drifter_data</span><span class="p">[</span><span class="s1">&#39;hour&#39;</span><span class="p">]})</span>
+    <span class="n">drifter_data</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span>
+    <span class="n">drifter_data</span> <span class="o">=</span> <span class="n">drifter_data</span><span class="p">[</span><span class="n">drifter_data</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">drifter_id</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">drifter_data</span></div>
+
+
+<div class="viewcode-block" id="run_skill_analysis"><a class="viewcode-back" href="../../octapy.html#octapy.tools.run_skill_analysis">[docs]</a><span class="k">def</span> <span class="nf">run_skill_analysis</span><span class="p">(</span><span class="n">drifter_file</span><span class="p">,</span> <span class="n">drifter_id</span><span class="p">,</span> <span class="n">skill_files</span><span class="p">,</span> <span class="n">date_range</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span>
+                       <span class="n">period</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="s1">&#39;3 Days&#39;</span><span class="p">),</span>
+                       <span class="n">data_freq</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="s1">&#39;60 minutes&#39;</span><span class="p">)):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate the skill score for a given particle run. Here, the skill score</span>
+<span class="sd">    is calculated as in `Liu and Weisberg (2011)</span>
+<span class="sd">    &lt;https://doi.org/10.1029/2010JC006837&gt;`_.</span>
+
+<span class="sd">    :param drifter_file:</span>
+<span class="sd">        a .csv file of the drifter data with the columns &#39;datetime&#39;, &#39;lat&#39;, and</span>
+<span class="sd">        &#39;lon&#39;</span>
+<span class="sd">    :param skill_files: a sorted list of the model output netCDF files that</span>
+<span class="sd">        contain the tracks from the model runs for skill</span>
+<span class="sd">    :param date_range:</span>
+<span class="sd">        a numpy.ndarray object of numpy.datetime64 objects, the drifter and</span>
+<span class="sd">        output data frequencies should match</span>
+<span class="sd">    :param period:</span>
+<span class="sd">        a pandas Timedelta object representing the time period for which to</span>
+<span class="sd">        calculate the skill</span>
+<span class="sd">    :param data_freq:</span>
+<span class="sd">        a pandas Timedelta object representing the frequency of the drifter data</span>
+<span class="sd">    :return:</span>
+<span class="sd">        a numpy array of particle times, trajectory lengths, separation</span>
+<span class="sd">        distances, and skill scores</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">geod</span> <span class="o">=</span> <span class="n">Geod</span><span class="p">(</span><span class="n">ellps</span><span class="o">=</span><span class="s2">&quot;WGS84&quot;</span><span class="p">)</span>
+    <span class="n">drifter_data</span> <span class="o">=</span> <span class="n">get_drifter_data</span><span class="p">(</span><span class="n">drifter_file</span><span class="p">,</span> <span class="n">drifter_id</span><span class="p">)</span>
+    <span class="n">drifter_data</span> <span class="o">=</span> <span class="n">drifter_data</span><span class="p">[</span><span class="n">drifter_data</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">date_range</span><span class="p">)]</span>
+
+    <span class="c1"># query one of the files to find the number of particles</span>
+    <span class="n">rootgrp</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">skill_files</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">num_particles</span> <span class="o">=</span> <span class="n">rootgrp</span><span class="p">[</span><span class="s1">&#39;release&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span>
+    <span class="n">skill_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">skill_files</span><span class="p">),</span> <span class="n">num_particles</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;O&#39;</span><span class="p">)</span>
+
+    <span class="c1"># for each skill output file</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">skill_files</span><span class="p">)):</span>
+        <span class="c1"># open model data and convert times to datetimes</span>
+        <span class="n">rootgrp</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">skill_files</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">units</span><span class="p">,</span> <span class="n">epoch</span> <span class="o">=</span> <span class="n">rootgrp</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; since &#39;</span><span class="p">)</span>
+        <span class="n">times</span> <span class="o">=</span> <span class="n">rootgrp</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">][:]</span>
+        <span class="n">times</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="n">epoch</span><span class="p">)</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">TimedeltaIndex</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">units</span><span class="p">)</span>
+        <span class="c1"># get the drifter coordinates at corresponding times as model output</span>
+        <span class="n">drift_indices</span> <span class="o">=</span> <span class="n">drifter_data</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">times</span><span class="p">)</span>
+        <span class="n">drifter_lats</span> <span class="o">=</span> <span class="n">drifter_data</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">drift_indices</span><span class="p">]</span>
+        <span class="n">drifter_lons</span> <span class="o">=</span> <span class="n">drifter_data</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">drift_indices</span><span class="p">]</span>
+        <span class="c1"># get the model coordinates</span>
+        <span class="n">model_indices</span> <span class="o">=</span> <span class="n">times</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">drifter_data</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">])</span>
+        <span class="n">model_lats</span> <span class="o">=</span> <span class="n">rootgrp</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">][:,</span> <span class="n">model_indices</span><span class="p">]</span>
+        <span class="n">model_lons</span> <span class="o">=</span> <span class="n">rootgrp</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">][:,</span> <span class="n">model_indices</span><span class="p">]</span>
+
+        <span class="c1"># for each particle</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_particles</span><span class="p">):</span>
+            <span class="c1"># find the total length of the trajectory by adding each path length</span>
+            <span class="n">traj_len</span> <span class="o">=</span> <span class="n">geod</span><span class="o">.</span><span class="n">line_length</span><span class="p">(</span><span class="n">model_lons</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">model_lats</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+            <span class="c1"># find the separation distance</span>
+            <span class="n">lons</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">drifter_lons</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">model_lons</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+            <span class="n">lats</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">drifter_lats</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">model_lats</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+            <span class="n">sep_distance</span> <span class="o">=</span> <span class="n">geod</span><span class="o">.</span><span class="n">line_length</span><span class="p">(</span><span class="n">lons</span><span class="p">,</span> <span class="n">lats</span><span class="p">)</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">sep_distance</span> <span class="o">/</span> <span class="n">traj_len</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span>
+            <span class="c1"># save the skill information to array</span>
+            <span class="n">skill_data</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">times</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">traj_len</span><span class="p">,</span> <span class="n">sep_distance</span><span class="p">,</span> <span class="n">s</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">skill_data</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">octapy</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../includeme.html">octapy</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Jason Tilley.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
