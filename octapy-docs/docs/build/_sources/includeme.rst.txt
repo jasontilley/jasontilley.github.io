@@ -1,4 +1,0 @@
-octapy
-======
-
-.. include:: ../../README.md
