@@ -1,0 +1,764 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>octapy package &#8212; octapy 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="octapy-package">
+<h1>octapy package<a class="headerlink" href="#octapy-package" title="Permalink to this headline">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-octapy.data">
+<span id="octapy-data-module"></span><h2>octapy.data module<a class="headerlink" href="#module-octapy.data" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="octapy.data.Data">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">octapy.data.</span></code><code class="sig-name descname"><span class="pre">Data</span></code><a class="headerlink" href="#octapy.data.Data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>a Cython data container class</p>
+<dl class="py attribute">
+<dt id="octapy.data.Data.sal">
+<code class="sig-name descname"><span class="pre">sal</span></code><a class="headerlink" href="#octapy.data.Data.sal" title="Permalink to this definition">¶</a></dt>
+<dd><p>salinity</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="octapy.data.Data.ssh">
+<code class="sig-name descname"><span class="pre">ssh</span></code><a class="headerlink" href="#octapy.data.Data.ssh" title="Permalink to this definition">¶</a></dt>
+<dd><p>sea surface height</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="octapy.data.Data.temp">
+<code class="sig-name descname"><span class="pre">temp</span></code><a class="headerlink" href="#octapy.data.Data.temp" title="Permalink to this definition">¶</a></dt>
+<dd><p>temperature</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="octapy.data.Data.u">
+<code class="sig-name descname"><span class="pre">u</span></code><a class="headerlink" href="#octapy.data.Data.u" title="Permalink to this definition">¶</a></dt>
+<dd><p>u-velocity (eastward velocity)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="octapy.data.Data.v">
+<code class="sig-name descname"><span class="pre">v</span></code><a class="headerlink" href="#octapy.data.Data.v" title="Permalink to this definition">¶</a></dt>
+<dd><p>v-velocity (northward velocity)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="octapy.data.Data.w">
+<code class="sig-name descname"><span class="pre">w</span></code><a class="headerlink" href="#octapy.data.Data.w" title="Permalink to this definition">¶</a></dt>
+<dd><p>w-velocity (upward velocity)</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-octapy.get_data_at_index">
+<span id="octapy-get-data-at-index-module"></span><h2>octapy.get_data_at_index module<a class="headerlink" href="#module-octapy.get_data_at_index" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="octapy.get_data_at_index.get_data_at_index">
+<code class="sig-prename descclassname"><span class="pre">octapy.get_data_at_index.</span></code><code class="sig-name descname"><span class="pre">get_data_at_index</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#octapy.get_data_at_index.get_data_at_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cython function for getting  data from a netCDF file at a given index
+location</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepath</strong> – path to the netCDF file</p></li>
+<li><p><strong>index</strong> – the ravelled index to extract 3D variables in the netCDF file</p></li>
+<li><p><strong>surf_index</strong> – the ravelled index to extract sea surface height in the netCDF file</p></li>
+<li><p><strong>dims</strong> – the dimensions of the model</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a Data object instance</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-octapy.interp_idw">
+<span id="octapy-interp-idw-module"></span><h2>octapy.interp_idw module<a class="headerlink" href="#module-octapy.interp_idw" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="octapy.interp_idw.interp_idw">
+<code class="sig-prename descclassname"><span class="pre">octapy.interp_idw.</span></code><code class="sig-name descname"><span class="pre">interp_idw</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#octapy.interp_idw.interp_idw" title="Permalink to this definition">¶</a></dt>
+<dd><p>a Cython inverse distance weighted interpolation function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>particle</strong> – a Particle instance</p></li>
+<li><p><strong>data</strong> – a Data instance</p></li>
+<li><p><strong>weights</strong> – weights used for inverse distance weighted interpolation</p></li>
+<li><p><strong>dims</strong> – dimensions of the Model instance</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a particle instance with interpolated environmental data</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-octapy.tools">
+<span id="octapy-tools-module"></span><h2>octapy.tools module<a class="headerlink" href="#module-octapy.tools" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="octapy.tools.get_filepath">
+<code class="sig-prename descclassname"><span class="pre">octapy.tools.</span></code><code class="sig-name descname"><span class="pre">get_filepath</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datetime64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">submodel_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/octapy/tools.html#get_filepath"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#octapy.tools.get_filepath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the filename for a given timestep</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>datetime64</strong> – a numpy.datetime64 object for the data’s time</p></li>
+<li><p><strong>model_name</strong> – the oceanographic model being used</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>string of the filepath</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="octapy.tools.get_extent">
+<code class="sig-prename descclassname"><span class="pre">octapy.tools.</span></code><code class="sig-name descname"><span class="pre">get_extent</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/octapy/tools.html#get_extent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#octapy.tools.get_extent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the spatial extent of a grid as a list</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>grid</strong> – a Grid instance</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a list of coordinates representing the extent as [minimum longitude,
+maximum longitude, minimum latitude, maximum latitude]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="octapy.tools.netcdf_to_csv">
+<code class="sig-prename descclassname"><span class="pre">octapy.tools.</span></code><code class="sig-name descname"><span class="pre">netcdf_to_csv</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/octapy/tools.html#netcdf_to_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#octapy.tools.netcdf_to_csv" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert output netcdf files to a .csv file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_list</strong> – a list of paths to the netcdf files to be converted</p></li>
+<li><p><strong>outfile</strong> – path of the .csv file to be created</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="octapy.tools.plot_csv_output">
+<code class="sig-prename descclassname"><span class="pre">octapy.tools.</span></code><code class="sig-name descname"><span class="pre">plot_csv_output</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lines'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/octapy/tools.html#plot_csv_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#octapy.tools.plot_csv_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>plot output trajectories contained in a .csv file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_list</strong> – a list of paths to the .csv files to be plotted</p></li>
+<li><p><strong>extent</strong> – a list of coordinates representing the extent as [minimum longitude,
+maximum longitude, minimum latitude, maximum latitude]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="octapy.tools.plot_netcdf_output">
+<code class="sig-prename descclassname"><span class="pre">octapy.tools.</span></code><code class="sig-name descname"><span class="pre">plot_netcdf_output</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lines'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drifter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contour_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contour_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/octapy/tools.html#plot_netcdf_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#octapy.tools.plot_netcdf_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>plot output trajectories contained in netcdf files</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_list</strong> – a list of paths to the .csv files to be plotted</p></li>
+<li><p><strong>extent</strong> – a list of coordinates representing the extent as [minimum longitude,
+maximum longitude, minimum latitude, maximum latitude]</p></li>
+<li><p><strong>out_file</strong> – path for the output image file</p></li>
+<li><p><strong>step</strong> – integer representing the number of trajectory points to plot (e.g,
+step=2 means you will show every two points)</p></li>
+<li><p><strong>plot_type</strong> – type of plot for each trajectory, may be ‘lines’ or ‘scatter’.
+Defaults is ‘lines’.</p></li>
+<li><p><strong>colors</strong> – list of python colors to customize line colors. Must be same length as
+file_list.</p></li>
+<li><p><strong>drifter</strong> – path to .csv file containing drifter track containing columns ‘lats’
+and ‘lons’</p></li>
+<li><p><strong>contour_file</strong> – path to netcdf file containing spatial temperature data</p></li>
+<li><p><strong>contour_idx</strong> – index for the sigma level of temperature data to plot (0 = surface)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="octapy.tools.build_skill_release">
+<code class="sig-prename descclassname"><span class="pre">octapy.tools.</span></code><code class="sig-name descname"><span class="pre">build_skill_release</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">drifter_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Timedelta('3</span> <span class="pre">days</span> <span class="pre">00:00:00')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Timedelta('0</span> <span class="pre">days</span> <span class="pre">01:00:00')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/octapy/tools.html#build_skill_release"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#octapy.tools.build_skill_release" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine the model skill against a particular drifter</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>drifter_file</strong> – a .csv file of the drifter data with the columns ‘datetime’, ‘lat’, and
+‘lon’</p></li>
+<li><p><strong>model</strong> – an initialized octapy.tracking.Model object</p></li>
+<li><p><strong>period</strong> – a pandas Timedelta object representing the time period for which to
+calculate the skill</p></li>
+<li><p><strong>data_freq</strong> – a pandas Timedelta object representing the frequency of the drifter data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="octapy.tools.get_drifter_data">
+<code class="sig-prename descclassname"><span class="pre">octapy.tools.</span></code><code class="sig-name descname"><span class="pre">get_drifter_data</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">drifter_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drifter_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/octapy/tools.html#get_drifter_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#octapy.tools.get_drifter_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets drifter data from a given .csv file for a particular drifter id</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>drifter_file</strong> – a .csv file of the drifter data with the columns ‘datetime’, ‘lat’, and
+‘lon’</p></li>
+<li><p><strong>drifter_id</strong> – the drifter id with the same type as in the drifter file</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a Pandas DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="octapy.tools.run_skill_analysis">
+<code class="sig-prename descclassname"><span class="pre">octapy.tools.</span></code><code class="sig-name descname"><span class="pre">run_skill_analysis</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">drifter_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drifter_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skill_files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_range</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">period</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Timedelta('3</span> <span class="pre">days</span> <span class="pre">00:00:00')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Timedelta('0</span> <span class="pre">days</span> <span class="pre">01:00:00')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/octapy/tools.html#run_skill_analysis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#octapy.tools.run_skill_analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the skill score for a given particle run. Here, the skill score
+is calculated as in <a class="reference external" href="https://doi.org/10.1029/2010JC006837">Liu and Weisberg (2011)</a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>drifter_file</strong> – a .csv file of the drifter data with the columns ‘datetime’, ‘lat’, and
+‘lon’</p></li>
+<li><p><strong>skill_files</strong> – a sorted list of the model output netCDF files that
+contain the tracks from the model runs for skill</p></li>
+<li><p><strong>date_range</strong> – a numpy.ndarray object of numpy.datetime64 objects, the drifter and
+output data frequencies should match</p></li>
+<li><p><strong>period</strong> – a pandas Timedelta object representing the time period for which to
+calculate the skill</p></li>
+<li><p><strong>data_freq</strong> – a pandas Timedelta object representing the frequency of the drifter data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a numpy array of particle times, trajectory lengths, separation
+distances, and skill scores</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-octapy.tracking">
+<span id="octapy-tracking-module"></span><h2>octapy.tracking module<a class="headerlink" href="#module-octapy.tracking" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="octapy.tracking.Model">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">octapy.tracking.</span></code><code class="sig-name descname"><span class="pre">Model</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">release_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">submodel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diffusion</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_date_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">numpy.timedelta64(60,</span> <span class="pre">'m')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">numpy.timedelta64(60,</span> <span class="pre">'m')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_timestep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">numpy.timedelta64(60,</span> <span class="pre">'m')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">leafsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vert_migration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vert_array</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">numpy.timedelta64(60,</span> <span class="pre">'m')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/octapy/tracking.html#Model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#octapy.tracking.Model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A particle tracking Model object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>release_file</strong> – a file containing the particle coordinates and release times</p></li>
+<li><p><strong>model</strong> – name string of the ocean model used for input data (e.g, ‘HYCOM’)</p></li>
+<li><p><strong>submodel</strong> – name string of the submodel and/or experiment used for input data
+(e.g, ‘GOMl0.04/expt_31.0’)</p></li>
+<li><p><strong>data_dir</strong> – data directory path</p></li>
+<li><p><strong>direction</strong> – <dl class="simple">
+<dt>forcing direction through time. Must be  1 for forward or -1</dt><dd><p>for backward</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>dims</strong> – dimensionality of the model, must be 2 or 3</p></li>
+<li><p><strong>diffusion</strong> – if true, enables diffusion</p></li>
+<li><p><strong>data_vars</strong> – an numpy.ndarray of the variable names in the data file</p></li>
+<li><p><strong>depth</strong> – forcing depth if the model is 2-dimensional</p></li>
+<li><p><strong>extent</strong> – a list of extent coordinates as [minlat, maxlat, minlon, maxlon]</p></li>
+<li><p><strong>data_date_range</strong> – a numpy.ndarray object of numpy.datetime64 objects containing the dates
+of the input data. WARNING: Must match frequency of data</p></li>
+<li><p><strong>timestep</strong> – a numpy.timedelta64 object representing the timestep of the tracking
+model in minutes (e.g., np.timedelta64(60,’m’))</p></li>
+<li><p><strong>data_freq</strong> – a numpy.timedelta64 object representing the frequency of data on the
+data server (e.g., np.timedelta64(60,’m’))</p></li>
+<li><p><strong>data_timestep</strong> – a numpy.timedelta64 object representing the timestep of the data to be
+downloaded in minutes (e.g., np.timedelta64(60,’m’))</p></li>
+<li><p><strong>interp</strong> – interpolation method. Supported are ‘linear’, ‘nearest’, ‘splinef2d’,
+and ‘idw’.</p></li>
+<li><p><strong>leafsize</strong> – number of nearest neighbors for some interpolation schemes</p></li>
+<li><p><strong>vert_migration</strong> – if True, the particle will undergo daily vertical migrations which will
+override w velocities</p></li>
+<li><p><strong>vert_array</strong> – an array of length 24 representing the depth of a particle over a
+24-hour period when vert_mirgration is set to True</p></li>
+<li><p><strong>output_file</strong> – base output file name</p></li>
+<li><p><strong>output_freq</strong> – a numpy.timedelta64 object representing how often the particle data will
+be output to the output file in minutes (e.g., np.timedelta64(60,’m’))</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A Model object</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="octapy.tracking.Model.__init__">
+<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">release_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">submodel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diffusion</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_date_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">numpy.timedelta64(60,</span> <span class="pre">'m')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">numpy.timedelta64(60,</span> <span class="pre">'m')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_timestep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">numpy.timedelta64(60,</span> <span class="pre">'m')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">leafsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vert_migration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vert_array</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">numpy.timedelta64(60,</span> <span class="pre">'m')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/octapy/tracking.html#Model.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#octapy.tracking.Model.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="octapy.tracking.Grid">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">octapy.tracking.</span></code><code class="sig-name descname"><span class="pre">Grid</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/octapy/tracking.html#Grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#octapy.tracking.Grid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A Grid object. You must have already downloaded the data into the data
+directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>model</strong> – Model instance to which the Grid instance will belong</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A Grid object</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="octapy.tracking.Grid.__init__">
+<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/octapy/tracking.html#Grid.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#octapy.tracking.Grid.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="octapy.tracking.Grid.src_crs">
+<code class="sig-name descname"><span class="pre">src_crs</span></code><a class="headerlink" href="#octapy.tracking.Grid.src_crs" title="Permalink to this definition">¶</a></dt>
+<dd><p>a cartopy.crs projection object representing the data’s source 
+projection (e.g., cartopy.crs.LambertCylindrical())</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="octapy.tracking.Grid.tgt_crs">
+<code class="sig-name descname"><span class="pre">tgt_crs</span></code><a class="headerlink" href="#octapy.tracking.Grid.tgt_crs" title="Permalink to this definition">¶</a></dt>
+<dd><p>a cartopy.crs projection object representing the model’s target 
+projection</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="octapy.tracking.Grid.file">
+<code class="sig-name descname"><span class="pre">file</span></code><a class="headerlink" href="#octapy.tracking.Grid.file" title="Permalink to this definition">¶</a></dt>
+<dd><p>name of the file from which the grid was produced.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="octapy.tracking.Grid.depths">
+<code class="sig-name descname"><span class="pre">depths</span></code><a class="headerlink" href="#octapy.tracking.Grid.depths" title="Permalink to this definition">¶</a></dt>
+<dd><p>depths of the grid</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="octapy.tracking.Grid.lons">
+<code class="sig-name descname"><span class="pre">lons</span></code><a class="headerlink" href="#octapy.tracking.Grid.lons" title="Permalink to this definition">¶</a></dt>
+<dd><p>longitudes of the grid</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="octapy.tracking.Grid.lats">
+<code class="sig-name descname"><span class="pre">lats</span></code><a class="headerlink" href="#octapy.tracking.Grid.lats" title="Permalink to this definition">¶</a></dt>
+<dd><p>latitudes of the grid</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="octapy.tracking.Grid.x">
+<code class="sig-name descname"><span class="pre">x</span></code><a class="headerlink" href="#octapy.tracking.Grid.x" title="Permalink to this definition">¶</a></dt>
+<dd><p>the x coordinates of the grid in meters</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="octapy.tracking.Grid.y">
+<code class="sig-name descname"><span class="pre">y</span></code><a class="headerlink" href="#octapy.tracking.Grid.y" title="Permalink to this definition">¶</a></dt>
+<dd><p>the y coordinates of the grid in meters</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="octapy.tracking.Grid.points">
+<code class="sig-name descname"><span class="pre">points</span></code><a class="headerlink" href="#octapy.tracking.Grid.points" title="Permalink to this definition">¶</a></dt>
+<dd><p>an array of grid coordinates in meters</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="octapy.tracking.Grid.tree">
+<code class="sig-name descname"><span class="pre">tree</span></code><a class="headerlink" href="#octapy.tracking.Grid.tree" title="Permalink to this definition">¶</a></dt>
+<dd><p>a scipy.spatial.cKDTree instance representing the grid</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="octapy.tracking.Particle">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">octapy.tracking.</span></code><code class="sig-name descname"><span class="pre">Particle</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ssh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/octapy/tracking.html#Particle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#octapy.tracking.Particle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A Particle object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lat</strong> – Latitude of the particle</p></li>
+<li><p><strong>lon</strong> – Longitude of the particle</p></li>
+<li><p><strong>depth</strong> – Depth of the particle in meters</p></li>
+<li><p><strong>timestamp</strong> – a numpy.datetime64 instance representing the time of the particle</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A Particle object</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="octapy.tracking.Particle.__init__">
+<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ssh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/octapy/tracking.html#Particle.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#octapy.tracking.Particle.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="octapy.tracking.Particle.x">
+<code class="sig-name descname"><span class="pre">x</span></code><a class="headerlink" href="#octapy.tracking.Particle.x" title="Permalink to this definition">¶</a></dt>
+<dd><p>the x coordinate in meters</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="octapy.tracking.Particle.y">
+<code class="sig-name descname"><span class="pre">y</span></code><a class="headerlink" href="#octapy.tracking.Particle.y" title="Permalink to this definition">¶</a></dt>
+<dd><p>the y coordinate in meters</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="octapy.tracking.Particle.u">
+<code class="sig-name descname"><span class="pre">u</span></code><a class="headerlink" href="#octapy.tracking.Particle.u" title="Permalink to this definition">¶</a></dt>
+<dd><p>the u-velocity (eastward velocity) at the particle’s location</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="octapy.tracking.Particle.v">
+<code class="sig-name descname"><span class="pre">v</span></code><a class="headerlink" href="#octapy.tracking.Particle.v" title="Permalink to this definition">¶</a></dt>
+<dd><p>the v-velocity (northward velocity) at the particle’s location</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="octapy.tracking.Particle.w">
+<code class="sig-name descname"><span class="pre">w</span></code><a class="headerlink" href="#octapy.tracking.Particle.w" title="Permalink to this definition">¶</a></dt>
+<dd><p>the w-velocity (upward velocity) at the particle’s location</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="octapy.tracking.Particle.temp">
+<code class="sig-name descname"><span class="pre">temp</span></code><a class="headerlink" href="#octapy.tracking.Particle.temp" title="Permalink to this definition">¶</a></dt>
+<dd><p>the temperature at the particle’s location</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="octapy.tracking.Particle.sal">
+<code class="sig-name descname"><span class="pre">sal</span></code><a class="headerlink" href="#octapy.tracking.Particle.sal" title="Permalink to this definition">¶</a></dt>
+<dd><p>the salinity at the particle’s location</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="octapy.tracking.Particle.ssh">
+<code class="sig-name descname"><span class="pre">ssh</span></code><a class="headerlink" href="#octapy.tracking.Particle.ssh" title="Permalink to this definition">¶</a></dt>
+<dd><p>the sea surface height at the particle’s location</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="octapy.tracking.Particle.filepath">
+<code class="sig-name descname"><span class="pre">filepath</span></code><a class="headerlink" href="#octapy.tracking.Particle.filepath" title="Permalink to this definition">¶</a></dt>
+<dd><p>the expected file path given the particles timestamp</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="octapy.tracking.deepcopy">
+<code class="sig-prename descclassname"><span class="pre">octapy.tracking.</span></code><code class="sig-name descname"><span class="pre">deepcopy</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">particle</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/octapy/tracking.html#deepcopy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#octapy.tracking.deepcopy" title="Permalink to this definition">¶</a></dt>
+<dd><p>make a deep copy of a particle</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>particle</strong> – A particle instance</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A Particle object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="octapy.tracking.transform">
+<code class="sig-prename descclassname"><span class="pre">octapy.tracking.</span></code><code class="sig-name descname"><span class="pre">transform</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src_crs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tgt_crs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/octapy/tracking.html#transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#octapy.tracking.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>transform the longitude and latitude of a point to x and y coordinates
+for a given coordinate reference system</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src_crs</strong> – the source coordinate reference system</p></li>
+<li><p><strong>tgt_crs</strong> – the target coordinate reference system</p></li>
+<li><p><strong>lon</strong> – the longitude of the point</p></li>
+<li><p><strong>lat</strong> – the latitude of the point</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the x and y coordinates of the point</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="octapy.tracking.download_hycom_data">
+<code class="sig-prename descclassname"><span class="pre">octapy.tracking.</span></code><code class="sig-name descname"><span class="pre">download_hycom_data</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/octapy/tracking.html#download_hycom_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#octapy.tracking.download_hycom_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download the input data for a given Model instance</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>model</strong> – a model instance</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="octapy.tracking.get_physical">
+<code class="sig-prename descclassname"><span class="pre">octapy.tracking.</span></code><code class="sig-name descname"><span class="pre">get_physical</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">particle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/octapy/tracking.html#get_physical"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#octapy.tracking.get_physical" title="Permalink to this definition">¶</a></dt>
+<dd><p>wrapper for the interp3d function that interpolates for time if
+necessary</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>particle</strong> – a particle instance</p></li>
+<li><p><strong>grid</strong> – a grid instance</p></li>
+<li><p><strong>model</strong> – a model instance</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a particle instance</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="octapy.tracking.interp3d">
+<code class="sig-prename descclassname"><span class="pre">octapy.tracking.</span></code><code class="sig-name descname"><span class="pre">interp3d</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">particle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/octapy/tracking.html#interp3d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#octapy.tracking.interp3d" title="Permalink to this definition">¶</a></dt>
+<dd><p>fills the interpolated environmental attributes for a particle instance</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>particle</strong> – a particle instance</p></li>
+<li><p><strong>grid</strong> – a grid instance</p></li>
+<li><p><strong>model</strong> – a model instance</p></li>
+<li><p><strong>power</strong> – the power used in the inverse distance weighted interpolation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a particle instance</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="octapy.tracking.interp_for_time">
+<code class="sig-prename descclassname"><span class="pre">octapy.tracking.</span></code><code class="sig-name descname"><span class="pre">interp_for_time</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">particle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">particle1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">particle2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/octapy/tracking.html#interp_for_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#octapy.tracking.interp_for_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>linear interpolation of the environmental parameters for a particle in
+time</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>particle</strong> – a Particle instance at an invalid timestep for which environmental
+parameters are being interpolated in time</p></li>
+<li><p><strong>particle1</strong> – a Particle instance at the last valid data timestep</p></li>
+<li><p><strong>particle2</strong> – a Particle instance at the next valid data timestep</p></li>
+<li><p><strong>dims</strong> – dimensions of the Model instance</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a Particle instance</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="octapy.tracking.force_particle">
+<code class="sig-prename descclassname"><span class="pre">octapy.tracking.</span></code><code class="sig-name descname"><span class="pre">force_particle</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">particle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/octapy/tracking.html#force_particle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#octapy.tracking.force_particle" title="Permalink to this definition">¶</a></dt>
+<dd><p>force the particle to the next timestep</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>particle</strong> – a particle instance</p></li>
+<li><p><strong>grid</strong> – a grid instance</p></li>
+<li><p><strong>model</strong> – a model instance</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a particle instance</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="octapy.tracking.add_row_to_arr">
+<code class="sig-prename descclassname"><span class="pre">octapy.tracking.</span></code><code class="sig-name descname"><span class="pre">add_row_to_arr</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">particle</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/octapy/tracking.html#add_row_to_arr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#octapy.tracking.add_row_to_arr" title="Permalink to this definition">¶</a></dt>
+<dd><p>add a row containing the Particle attributes to an array</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arr</strong> – a NumPy array</p></li>
+<li><p><strong>particle</strong> – a Particle instance</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a NumPy array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="octapy.tracking.run_2d_model">
+<code class="sig-prename descclassname"><span class="pre">octapy.tracking.</span></code><code class="sig-name descname"><span class="pre">run_2d_model</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/octapy/tracking.html#run_2d_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#octapy.tracking.run_2d_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>generate the trajectories for a 2D Model instance</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid</strong> – a grid instance</p></li>
+<li><p><strong>model</strong> – a 2D model instance</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="octapy.tracking.run_3d_model">
+<code class="sig-prename descclassname"><span class="pre">octapy.tracking.</span></code><code class="sig-name descname"><span class="pre">run_3d_model</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/octapy/tracking.html#run_3d_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#octapy.tracking.run_3d_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>generate the trajectories for a 3D Model instance</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid</strong> – a grid instance</p></li>
+<li><p><strong>model</strong> – a 3D model instance</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-octapy">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-octapy" title="Permalink to this headline">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">octapy</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="includeme.html">octapy</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Jason Tilley.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/octapy.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
